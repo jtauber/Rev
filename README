@@ -1,17 +1,16 @@
-gyt is (the start of) an implementation of Git-like ideas in Python.
+Rev (formerly 'gyt') is (the start of) an implementation of Git-like ideas in
+Python.
 
 It's not intended to be a port of Git to Python. It's more designed as an
 exploration of how Git works and how the concepts might be applied to other
 tasks. In particular, I'm interested in exploring its use for versioning
 in-memory data structures rather than blobs on disk.
 
-So in a way, gyt is to Git what Rel is to a relational databases. In fact,
-the two might have some strong tie, in terms of gyt being used to version
+So in a way, Rev is to Git what Rel is to a relational databases. In fact,
+the two might have some strong tie, in terms of Rev being used to version
 relations.
 
-gyt will probably look less and less like Git internals over time. I'll
-likely change the name at some point as the distance between the two
-increases.
+Rev will probably look less and less like Git internals over time.
 
 
 James Tauber

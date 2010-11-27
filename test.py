@@ -1,4 +1,4 @@
-from gyt import Repo
+from Rev import Repo
 
 repo = Repo()
 
