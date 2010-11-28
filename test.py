@@ -1,85 +1,81 @@
+#!/usr/bin/env python3.1
+
 from Rev import Repo
 
 repo = Repo()
 
-# first we'll do this a very low level way...
+## first we'll do this a very low level way...
 
-# 1. create some blobs
+# 1. create a directory tree
 
-b1 = repo.create_blob("version 1")
-b2 = repo.create_blob("version 2")
-b3 = repo.create_blob("new file")
+t = {
+    "test.txt": "version 1",
+    "new.txt": "new file",
+}
 
-# 2. add them to the index
+# 2. shrink and store it
 
-repo.update_index({
-    "test.txt": b1,
-    "new.txt": b3,
-}, add=True)
+t1 = repo.shrink(t)
 
-# 3. write the index to a tree object
-t1 = repo.write_tree()
-
-# 4. create a commit object out of it
+# 3. create a commit object out of it
 
 c1 = repo.create_commit(t1, "my first commit")
 
-# 5. and move the HEAD 
+# 4. and move the HEAD 
 
 repo.refs[repo.HEAD] = c1
 
-# now let's make a change to a file...
+assert t == repo.expand(repo.objects[c1].obj_sha)
 
-repo.update_index({
-    "test.txt": b2,
-})
-t2 = repo.write_tree()
+
+## now let's make a change to a file...
+
+t["test.txt"] = "version 2"
+
+t2 = repo.shrink(t)
 
 parent = repo.refs[repo.HEAD]
 c2 = repo.create_commit(t2, "second commit", parents=[parent])
 repo.refs[repo.HEAD] = c2
 
-# let's create a subdirectory now
 
-b4 = repo.create_blob("file in subdir")
-t3 = repo.create_tree({
-    "foo.txt": b4,
-})
-repo.update_index({
-    "subdir": t3,
-}, add=True)
+## let's create a subdirectory now
 
-t4 = repo.write_tree()
 
-# this time we'll use the higher-level commit method
+t["subdir"] = {
+    "foo.txt": "file in subdir"
+}
 
-c3 = repo.commit(t4, "added subdir")
 
-# retrieve subdir/foo.txt from HEAD
+## this time we'll use the higher-level commit method
 
-print(repo.expand(repo.refs[repo.HEAD])["subdir"]["foo.txt"])
+c3 = repo.commit(t, "added subdir")
+
+
+## retrieve subdir/foo.txt from HEAD
+
+assert repo.retrieve_commit()["subdir"]["foo.txt"] == "file in subdir"
+
 
 # now let's create a branch
 
 repo.create_branch("branch-test")
 repo.checkout_branch("branch-test")
 
-b5 = repo.create_blob("changed!")
-t5 = repo.create_tree({
-    "foo.txt": b5,
-})
-repo.update_index({
-    "subdir": t5,
-})
-t6 = repo.write_tree()
-c4 = repo.commit(t6, "changed file in subdirectory")
+t = repo.retrieve_commit()
 
-# this should print "changed!"
+t["subdir"]["foo.txt"] = "changed!"
 
-print(repo.expand(repo.refs[repo.HEAD])["subdir"]["foo.txt"])
+c4 = repo.commit(t, "changed file in subdirectory")
 
-# now checkout master again
+
+## this should print "changed!"
+
+assert repo.retrieve_commit()["subdir"]["foo.txt"] == "changed!"
+
+
+## now checkout master again
 
 repo.checkout_branch("master")
 
-print(repo.expand(repo.refs[repo.HEAD])["subdir"]["foo.txt"])
+assert repo.retrieve_commit()["subdir"]["foo.txt"] == "file in subdir"
