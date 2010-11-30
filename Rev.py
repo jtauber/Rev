@@ -3,6 +3,12 @@ import hashlib
 
 ## DATATYPES
 
+# Unlike Git, which has Blobs and Trees; Rev has Atoms, Dictionaries, Lists
+# and Tuples (the latter three corresponding to their Python equivalents)
+#
+# Other datatypes can be defined just by subclassing NodeBase and implementing
+# shrink and expand.
+
 
 class NodeBase:
     
@@ -54,6 +60,9 @@ class Tuple(NodeBase):
     
     def expand(self):
         return tuple(self.repo.expand(item) for item in self.content)
+
+
+## END DATATYPES
 
 
 class Commit:
