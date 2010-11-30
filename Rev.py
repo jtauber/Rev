@@ -130,7 +130,9 @@ class Repo:
     
     def commit(self, obj, message):
         obj_sha = self.shrink(obj)
-        commit_sha = self.create_commit(obj_sha, message, parents=[self.refs[self.HEAD]])
+        old_head = self.refs[self.HEAD]
+        commit_sha = self.create_commit(obj_sha, message, parents=[old_head])
+        # @@@ make thread-safe? HEAD could change during commit
         self.refs[self.HEAD] = commit_sha
         
         return commit_sha
