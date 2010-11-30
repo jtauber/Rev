@@ -25,7 +25,7 @@ c1 = repo.create_commit(t1, "my first commit")
 
 repo.refs[repo.HEAD] = c1
 
-assert t == repo.expand(repo.objects[c1].obj_sha)
+assert t == repo.expand(repo.get_object(c1).obj_sha)
 
 
 ## now let's make a change to a file...

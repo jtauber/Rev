@@ -104,8 +104,23 @@ class Repo:
         
         return store(obj)
     
+    def get_object(self, sha):
+        """
+        get the shallow version of the object with the given SHA.
+        
+        In other words, the components of the given object (if non-atomic)
+        will be further SHA references.
+        """
+        return self.objects[sha]
+    
     def expand(self, sha):
-        return self.objects[sha].expand()
+        """
+        get the deep version of the object with the given SHA.
+        
+        In other words, all components of the given object will be expanded
+        recursively to their actual values with no SHA references left.
+        """
+        return self.get_object(sha).expand()
     
     def create_commit(self, obj_sha, message, parents=None):
         if parents is None:
@@ -124,7 +139,7 @@ class Repo:
         if commit_sha is None:
             commit_sha = self.refs[self.HEAD]
         
-        return self.expand(self.objects[commit_sha].obj_sha)
+        return self.expand(self.get_object(commit_sha).obj_sha)
     
     def create_branch(self, branch_name, commit_sha=None):
         if commit_sha is None:
