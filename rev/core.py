@@ -25,6 +25,15 @@ class Repo:
         self.refs = {}
         self.HEAD = "master"
     
+    def resolve(self, ref):
+        """
+        resolves symbolic refs until a SHA is reached
+        """
+        if ref.startswith("ref"):
+            return self.resolve(self.refs[ref])
+        else:
+            return ref
+    
     def store(self, obj):
         sha = hashlib.sha1(bytes(obj)).hexdigest()
         self.objects[sha] = obj
