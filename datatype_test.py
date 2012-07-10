@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Rev import Repo
+from rev import Repo
 
 repo = Repo()
 
