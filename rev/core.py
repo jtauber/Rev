@@ -23,7 +23,7 @@ class Repo:
     def __init__(self):
         self.objects = {}
         self.refs = {}
-        self.HEAD = "master"
+        self.HEAD = "ref:master"
     
     def resolve(self, ref):
         """
@@ -69,7 +69,7 @@ class Repo:
     
     def commit(self, obj, message):
         obj_sha = self.shrink(obj)
-        old_head = self.refs[self.HEAD]
+        old_head = self.resolve(self.HEAD)
         commit_sha = self.create_commit(obj_sha, message, parents=[old_head])
         # @@@ make thread-safe? HEAD could change during commit
         self.refs[self.HEAD] = commit_sha
@@ -77,17 +77,11 @@ class Repo:
         return commit_sha
         
     def retrieve_commit(self, commit_sha=None):
-        if commit_sha is None:
-            commit_sha = self.refs[self.HEAD]
-        
-        return self.expand(self.get_object(commit_sha).obj_sha)
+        obj = self.get_object(commit_sha or self.resolve(self.HEAD))
+        return self.expand(obj.obj_sha)
     
     def create_branch(self, branch_name, commit_sha=None):
-        if commit_sha is None:
-            commit_sha = self.refs[self.HEAD]
-        
-        self.refs[branch_name] = commit_sha or self.refs[self.HEAD]
+        self.refs["ref:" + branch_name] = commit_sha or self.resolve(self.HEAD)
     
     def checkout_branch(self, branch_name):
-        self.HEAD = branch_name
-        # @@@ do anything to index?
+        self.HEAD = "ref:" + branch_name
