@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python3
 
 from Rev import Repo
 
@@ -21,7 +21,7 @@ t1 = repo.shrink(t)
 
 c1 = repo.create_commit(t1, "my first commit")
 
-# 4. and move the HEAD 
+# 4. and move the HEAD
 
 repo.refs[repo.HEAD] = c1
 
@@ -79,3 +79,5 @@ assert repo.retrieve_commit()["subdir"]["foo.txt"] == "changed!"
 repo.checkout_branch("master")
 
 assert repo.retrieve_commit()["subdir"]["foo.txt"] == "file in subdir"
+
+print("all tests passed.")

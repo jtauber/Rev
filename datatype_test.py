@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.1
+#!/usr/bin/env python3
 
 from Rev import Repo
 
@@ -17,3 +17,5 @@ assert repo.expand(l) == ["foo", 5.2, {"foo": 5.2}]
 assert repo.expand(t) == ("foo", 5.2)
 
 assert repo.shrink({"a": 1, "b": 2}) == repo.shrink({"b": 2, "a": 1})
+
+print("all tests passed.")
